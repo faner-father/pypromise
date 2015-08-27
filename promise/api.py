@@ -60,10 +60,5 @@ class Promise(object):
         return self
 
 
-class PromiseWrapper(object):
-    def __init__(self, target):
-        check_callable(target)
-        self._target = target
-
-    def __call__(self, *args, **kwargs):
-        return Promise(lambda: self._target(*args, **kwargs))
+def PromiseWrapper(target, *args, **kwargs):
+    return Promise(lambda: target(*args, **kwargs))
