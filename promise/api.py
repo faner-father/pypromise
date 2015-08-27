@@ -62,3 +62,9 @@ class Promise(object):
 
 def PromiseWrapper(target, *args, **kwargs):
     return Promise(lambda: target(*args, **kwargs))
+
+
+def promise_decorator(target):
+    def _func(*args, **kwargs):
+        return Promise(lambda: target(*args, **kwargs))
+    return _func

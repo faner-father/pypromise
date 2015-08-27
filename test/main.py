@@ -11,13 +11,14 @@ def long_wait_func(success=True):
     if not success:
         raise RuntimeError('test error')
 
-# @api.PromiseWrapper
-# def long_wait_func_2(success=True):
-#     import time
-#
-#     time.sleep(3)
-#     if not success:
-#         raise RuntimeError('test error')
+
+@api.promise_decorator
+def long_wait_func_2(success=True):
+    import time
+
+    time.sleep(3)
+    if not success:
+        raise RuntimeError('test error')
 
 def success():
     print 'success'
@@ -46,23 +47,21 @@ class TestMain(TestCase):
         print 'wait over, result is ', pr.result
         assert pr.result == fail()
 
+    def testPromise2(self):
+        import time
+        pr = long_wait_func_2().then(success).fail(fail)
+        while not pr.completed:
+            time.sleep(1)
+            print 'still wait ...'
+        print 'wait over, result is ', pr.result
+        assert pr.result == success()
 
-    # def testPromiseWithAnnotation(self):
-    #     print 'asd'
-        # import time
-        # pr = long_wait_func_2().then(success).fail(fail)
-        # while not pr.completed:
-        #     time.sleep(1)
-        #     print 'still wait ...'
-        # print 'wait over, result is ', pr.result
-        # assert pr.result == success()
-        #
-        # pr = long_wait_func_2(False).then(success).fail(fail)
-        # while not pr.completed:
-        #     time.sleep(1)
-        #     print 'still wait ...'
-        # print 'wait over, result is ', pr.result
-        # assert pr.result == fail()
+        pr = long_wait_func_2(False).then(success).fail(fail)
+        while not pr.completed:
+            time.sleep(1)
+            print 'still wait ...'
+        print 'wait over, result is ', pr.result
+        assert pr.result == fail()
 
 if __name__ == '__main__':
     from unittest import TestProgram
